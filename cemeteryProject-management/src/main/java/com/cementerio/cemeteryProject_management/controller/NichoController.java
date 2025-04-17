@@ -21,9 +21,9 @@ public class NichoController {
         return nichoService.getAll();
     }
 
-    @GetMapping("/{id}")
-    public NichoDTO obtenerPorId(@PathVariable Long id) {
-        return nichoService.getById(id);
+    @GetMapping("/{codigo}")
+    public NichoDTO obtenerPorCodigo(@PathVariable String codigo) {
+        return nichoService.getById(codigo);
     }
 
     @PostMapping
@@ -31,13 +31,14 @@ public class NichoController {
         return nichoService.save(dto);
     }
 
-    @PutMapping("/{id}")
-    public NichoDTO actualizar(@PathVariable Long id, @RequestBody NichoDTO dto) {
-        return nichoService.update(id, dto);
+    @PutMapping("/{codigo}")
+    public NichoDTO actualizar(@PathVariable String codigo, @RequestBody NichoDTO dto) {
+        return nichoService.update(codigo, dto);
     }
 
-    @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
-        nichoService.delete(id);
+    @DeleteMapping("/{codigo}")
+    public void eliminar(@PathVariable String codigo) {
+        nichoService.delete(codigo);
     }
 }
+

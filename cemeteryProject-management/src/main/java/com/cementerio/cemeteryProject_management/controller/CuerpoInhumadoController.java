@@ -21,8 +21,24 @@ public class CuerpoInhumadoController {
         return service.getAll();
     }
 
+    @GetMapping("/{id}")
+    public CuerpoInhumadoDTO obtenerPorId(@PathVariable String id) {
+        return service.getById(id);
+    }
+
     @PostMapping
-    public void guardar(@RequestBody CuerpoInhumadoDTO dto) {
-        service.save(dto);
+    public CuerpoInhumadoDTO guardar(@RequestBody CuerpoInhumadoDTO dto) {
+        return service.save(dto);
+    }
+
+    @PutMapping("/{id}")
+    public CuerpoInhumadoDTO actualizar(@PathVariable String id, @RequestBody CuerpoInhumadoDTO dto) {
+        return service.update(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable String id) {
+        service.delete(id);
     }
 }
+

@@ -22,7 +22,7 @@ public class NichoCuerpoController {
     }
 
     @GetMapping("/{id}")
-    public NichoCuerpoDTO getById(@PathVariable Long id) {
+    public NichoCuerpoDTO getById(@PathVariable String id) {
         return service.getById(id);
     }
 
@@ -32,7 +32,8 @@ public class NichoCuerpoController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable String id) {
         service.delete(id);
     }
 }
+

@@ -40,27 +40,27 @@ public class NichoService {
         return entidad;
     }
 
-    public NichoDTO getById(Long id) {
-        Nicho entidad = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Nicho no encontrado con id: " + id));
-        return toDTO(entidad);
-    }
-
     public NichoDTO save(NichoDTO dto) {
         Nicho entidad = toEntity(dto);
         return toDTO(repository.save(entidad));
     }
 
-    public NichoDTO update(Long id, NichoDTO dto) {
-        Nicho existente = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Nicho no encontrado con id: " + id));
-        existente.setCodigo(dto.getCodigo());
+    public NichoDTO getById(String codigo) {
+        Nicho entidad = repository.findById(codigo)
+                .orElseThrow(() -> new RuntimeException("Nicho no encontrado con código: " + codigo));
+        return toDTO(entidad);
+    }
+    
+    public NichoDTO update(String codigo, NichoDTO dto) {
+        Nicho existente = repository.findById(codigo)
+                .orElseThrow(() -> new RuntimeException("Nicho no encontrado con código: " + codigo));
         existente.setUbicacion(dto.getUbicacion());
         existente.setEstado(Nicho.EstadoNicho.valueOf(dto.getEstado()));
         return toDTO(repository.save(existente));
     }
-
-    public void delete(Long id) {
-        repository.deleteById(id);
+    
+    public void delete(String codigo) {
+        repository.deleteById(codigo);
     }
+    
 }

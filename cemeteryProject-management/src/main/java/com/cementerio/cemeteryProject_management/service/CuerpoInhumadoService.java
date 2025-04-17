@@ -17,6 +17,7 @@ public class CuerpoInhumadoService {
         this.repository = repository;
     }
 
+    // ✅ Obtener todos
     public List<CuerpoInhumadoDTO> getAll() {
         return repository.findAll()
                 .stream()
@@ -24,7 +25,55 @@ public class CuerpoInhumadoService {
                 .collect(Collectors.toList());
     }
 
-    public CuerpoInhumadoDTO toDTO(CuerpoInhumado entidad) {
+    // ✅ Obtener por ID
+    public CuerpoInhumadoDTO getById(String idCadaver) {
+        return toDTO(repository.findById(idCadaver)
+                .orElseThrow(() -> new RuntimeException("Cuerpo no encontrado con ID: " + idCadaver)));
+    }
+
+    // ✅ Guardar nuevo
+    public CuerpoInhumadoDTO save(CuerpoInhumadoDTO dto) {
+        CuerpoInhumado entidad = toEntity(dto);
+        return toDTO(repository.save(entidad));
+    }
+
+    // ✅ Actualizar existente
+    public CuerpoInhumadoDTO update(String id, CuerpoInhumadoDTO dto) {
+        CuerpoInhumado existente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cuerpo no encontrado con ID: " + id));
+
+        existente.setNombre(dto.getNombre());
+        existente.setApellido(dto.getApellido());
+        existente.setDocumentoIdentidad(dto.getDocumentoIdentidad());
+        existente.setNumeroProtocoloNecropsia(dto.getNumeroProtocoloNecropsia());
+        existente.setCausaMuerte(dto.getCausaMuerte());
+        existente.setFechaNacimiento(dto.getFechaNacimiento());
+        existente.setFechaDefuncion(dto.getFechaDefuncion());
+        existente.setFechaIngreso(dto.getFechaIngreso());
+        existente.setFechaInhumacion(dto.getFechaInhumacion());
+        existente.setFechaExhumacion(dto.getFechaExhumacion());
+        existente.setFuncionarioReceptor(dto.getFuncionarioReceptor());
+        existente.setCargoFuncionario(dto.getCargoFuncionario());
+        existente.setAutoridadRemitente(dto.getAutoridadRemitente());
+        existente.setCargoAutoridadRemitente(dto.getCargoAutoridadRemitente());
+        existente.setAutoridadExhumacion(dto.getAutoridadExhumacion());
+        existente.setCargoAutoridadExhumacion(dto.getCargoAutoridadExhumacion());
+        existente.setEstado(CuerpoInhumado.EstadoCuerpo.valueOf(dto.getEstado()));
+        existente.setObservaciones(dto.getObservaciones());
+
+        return toDTO(repository.save(existente));
+    }
+
+    // ✅ Eliminar por ID
+    public void delete(String id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("No se puede eliminar: cuerpo no encontrado con ID: " + id);
+        }
+        repository.deleteById(id);
+    }
+
+    // 🔄 Conversión Entidad → DTO
+    private CuerpoInhumadoDTO toDTO(CuerpoInhumado entidad) {
         CuerpoInhumadoDTO dto = new CuerpoInhumadoDTO();
         dto.setIdCadaver(entidad.getIdCadaver());
         dto.setNombre(entidad.getNombre());
@@ -48,8 +97,8 @@ public class CuerpoInhumadoService {
         return dto;
     }
 
-    // método para guardar, si quieres crear desde DTO
-    public CuerpoInhumado save(CuerpoInhumadoDTO dto) {
+    // 🔄 Conversión DTO → Entidad
+    private CuerpoInhumado toEntity(CuerpoInhumadoDTO dto) {
         CuerpoInhumado entidad = new CuerpoInhumado();
         entidad.setIdCadaver(dto.getIdCadaver());
         entidad.setNombre(dto.getNombre());
@@ -70,6 +119,6 @@ public class CuerpoInhumadoService {
         entidad.setCargoAutoridadExhumacion(dto.getCargoAutoridadExhumacion());
         entidad.setEstado(CuerpoInhumado.EstadoCuerpo.valueOf(dto.getEstado()));
         entidad.setObservaciones(dto.getObservaciones());
-        return repository.save(entidad);
+        return entidad;
     }
 }

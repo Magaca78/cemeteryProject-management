@@ -10,10 +10,8 @@ import lombok.*;
 public class Nicho {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String codigo;
+    
     private String ubicacion;
 
     @Enumerated(EnumType.STRING)

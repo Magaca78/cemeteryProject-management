@@ -46,7 +46,7 @@ public class NichoCuerpoService {
         NichoCuerpo entidad = new NichoCuerpo();
         CuerpoInhumado cuerpo = cuerpoRepository.findById(dto.getIdCadaver())
                 .orElseThrow(() -> new RuntimeException("Cuerpo no encontrado: " + dto.getIdCadaver()));
-        Nicho nicho = nichoRepository.findById(Long.valueOf(dto.getCodigoNicho()))
+                Nicho nicho = nichoRepository.findById(dto.getCodigoNicho())
                 .orElseThrow(() -> new RuntimeException("Nicho no encontrado con código: " + dto.getCodigoNicho()));
         entidad.setCuerpoInhumado(cuerpo);
         entidad.setNicho(nicho);
@@ -58,12 +58,13 @@ public class NichoCuerpoService {
         return toDTO(repository.save(entidad));
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
-
-    public NichoCuerpoDTO getById(Long id) {
+    
+    public NichoCuerpoDTO getById(String id) {
         return toDTO(repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("NichoCuerpo no encontrado con id: " + id)));
     }
+    
 }

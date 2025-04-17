@@ -10,8 +10,7 @@ import lombok.Setter;
 public class NichoCuerpo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "id_cadaver", nullable = false)
