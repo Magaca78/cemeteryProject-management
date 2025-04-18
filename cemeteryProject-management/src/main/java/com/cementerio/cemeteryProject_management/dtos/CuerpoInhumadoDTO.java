@@ -1,10 +1,14 @@
-package com.cementerio.cemeteryProject_management.dto;
+package com.cementerio.cemeteryProject_management.dtos;
 
+import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import lombok.Data;
+import com.cementerio.cemeteryProject_management.models.CuerpoInhumadoModel.EstadoCuerpo;
+
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CuerpoInhumadoDTO {
     private String idCadaver;
     private String nombre;
@@ -23,7 +27,6 @@ public class CuerpoInhumadoDTO {
     private String cargoAutoridadRemitente;
     private String autoridadExhumacion;
     private String cargoAutoridadExhumacion;
-    private String estado; // Enum como String
+    private EstadoCuerpo estado;
     private String observaciones;
 }
-
