@@ -20,6 +20,12 @@ public class NichoController {
         return nichoService.getAllNichos();
     }
 
+    @PostMapping("/sincronizar-estados")
+    public ResponseEntity<Void> sincronizarEstados() {
+        nichoService.sincronizarEstadosDeNichos();
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{codigo}")
     public ResponseEntity<NichoDTO> getById(@PathVariable String codigo) {
         return nichoService.getNichoById(codigo)

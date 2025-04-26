@@ -2,6 +2,8 @@ package com.cementerio.cemeteryProject_management.services;
 
 import com.cementerio.cemeteryProject_management.dtos.NichoDTO;
 import com.cementerio.cemeteryProject_management.models.NichoModel;
+import com.cementerio.cemeteryProject_management.models.NichoModel.EstadoNicho;
+import com.cementerio.cemeteryProject_management.repositories.INichoCuerpoRepository;
 import com.cementerio.cemeteryProject_management.repositories.INichoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,31 @@ public class NichoService {
     @Autowired
     private INichoRepository nichoRepository;
 
+    @Autowired
+    private INichoCuerpoRepository nichoCuerpoRepository;
+
+    public void sincronizarEstadosDeNichos() {
+        List<NichoModel> todos = nichoRepository.findAll();
+        for (NichoModel nicho : todos) {
+            // 1) Si está en mantenimiento, lo respetamos
+            if (nicho.getEstado() == NichoModel.EstadoNicho.MANTENIMIENTO) {
+                continue;
+            }
+
+            // 2) Sino, comprobamos la intermedia
+            boolean tieneCuerpo = nichoCuerpoRepository.existsByNichoCodigo(nicho.getCodigo());
+            NichoModel.EstadoNicho nuevoEstado = tieneCuerpo
+                ? NichoModel.EstadoNicho.OCUPADO
+                : NichoModel.EstadoNicho.DISPONIBLE;
+
+            // 3) Sólo guardamos si cambió
+            if (nicho.getEstado() != nuevoEstado) {
+                nicho.setEstado(nuevoEstado);
+                nichoRepository.save(nicho);
+            }
+        }
+    }
+
     public List<NichoDTO> getAllNichos() {
         return nichoRepository.findAll().stream()
                 .map(this::convertToDTO)
@@ -24,7 +51,15 @@ public class NichoService {
 
     public Optional<NichoDTO> getNichoById(String codigo) {
         return nichoRepository.findById(codigo)
-                .map(this::convertToDTO);
+            .map(nichoModel -> {
+                NichoDTO dto = convertToDTO(nichoModel);
+                // Validación extra en la tabla intermedia:
+                boolean ocupadoEnIntermedia = nichoCuerpoRepository.existsByNichoCodigo(codigo);
+                if (ocupadoEnIntermedia) {
+                    dto.setEstado(EstadoNicho.OCUPADO);
+                }
+                return dto;
+            });
     }
 
     public NichoDTO createNicho(NichoDTO dto) {
@@ -66,4 +101,5 @@ public class NichoService {
         model.setEstado(dto.getEstado());
         return model;
     }
+    
 }

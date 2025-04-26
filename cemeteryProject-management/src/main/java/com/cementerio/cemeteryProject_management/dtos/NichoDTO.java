@@ -10,4 +10,11 @@ public class NichoDTO {
     private String codigo; // El código será generado automáticamente, pero puedes mantenerlo en el DTO
     private String ubicacion;
     private EstadoNicho estado;
+
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
+    public String getUbicacion() { return ubicacion; }
+    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
+    public EstadoNicho getEstado() { return estado; }
+    public void setEstado(EstadoNicho estado) { this.estado = estado; }
 }
