@@ -46,4 +46,9 @@ public class CuerpoInhumadoController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/no-asignados")
+    public List<CuerpoInhumadoDTO> getCuerposNoAsignados() {
+        return cuerpoInhumadoService.getCuerposNoAsignados();
+    }
 }

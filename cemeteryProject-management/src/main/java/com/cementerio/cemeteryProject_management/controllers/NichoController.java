@@ -52,4 +52,9 @@ public class NichoController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/disponibles")
+    public List<NichoDTO> getNichosDisponibles() {
+        return nichoService.getNichosDisponibles();
+    }
 }

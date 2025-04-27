@@ -112,4 +112,11 @@ public class CuerpoInhumadoService {
         model.setObservaciones(dto.getObservaciones());
         return model;
     }
+
+    public List<CuerpoInhumadoDTO> getCuerposNoAsignados() {
+        return cuerpoInhumadoRepository.findCuerposNoAsignados()
+            .stream()
+            .map(this::convertToDTO)
+            .toList();
+    }
 }

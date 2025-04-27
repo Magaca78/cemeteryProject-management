@@ -101,5 +101,12 @@ public class NichoService {
         model.setEstado(dto.getEstado());
         return model;
     }
+
+    public List<NichoDTO> getNichosDisponibles() {
+        return nichoRepository.findByEstado(NichoModel.EstadoNicho.DISPONIBLE)
+            .stream()
+            .map(this::convertToDTO)
+            .toList();
+    }
     
 }
