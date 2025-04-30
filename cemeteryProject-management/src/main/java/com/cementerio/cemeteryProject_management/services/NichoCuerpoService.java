@@ -2,6 +2,7 @@ package com.cementerio.cemeteryProject_management.services;
 
 import com.cementerio.cemeteryProject_management.dtos.CuerpoInhumadoDTO;
 import com.cementerio.cemeteryProject_management.dtos.NichoCuerpoDTO;
+import com.cementerio.cemeteryProject_management.dtos.NichoDTO;
 import com.cementerio.cemeteryProject_management.models.CuerpoInhumadoModel;
 import com.cementerio.cemeteryProject_management.models.NichoCuerpoModel;
 import com.cementerio.cemeteryProject_management.models.NichoModel;
@@ -107,6 +108,12 @@ public class NichoCuerpoService {
                 .map(this::convertToDTO);
     }
 
+    public Optional<NichoDTO> getNichoAsignadoPorCuerpo(String idCadaver) {
+    return nichoCuerpoRepository.findByCuerpoInhumado_IdCadaver(idCadaver)
+        .map(NichoCuerpoModel::getNicho)
+        .map(this::convertToNichoDTO); 
+    }
+
     // Conversiones
 
     private NichoCuerpoDTO convertToDTO(NichoCuerpoModel model) {
@@ -117,10 +124,19 @@ public class NichoCuerpoService {
         return dto;
     }
 
-    private NichoCuerpoModel convertToModel(NichoCuerpoDTO dto) {
-        NichoCuerpoModel model = new NichoCuerpoModel();
-        model.setCuerpoInhumado(cuerpoInhumadoRepository.findById(dto.getIdCadaver()).orElseThrow());
-        model.setNicho(nichoRepository.findById(dto.getCodigoNicho()).orElseThrow());
-        return model;
+    private NichoDTO convertToNichoDTO(NichoModel model) {
+        NichoDTO dto = new NichoDTO();
+        dto.setCodigo(model.getCodigo());
+        dto.setUbicacion(model.getUbicacion());
+        dto.setEstado(model.getEstado());
+        return dto;
     }
+
+
+    // private NichoCuerpoModel convertToModel(NichoCuerpoDTO dto) {
+    //     NichoCuerpoModel model = new NichoCuerpoModel();
+    //     model.setCuerpoInhumado(cuerpoInhumadoRepository.findById(dto.getIdCadaver()).orElseThrow());
+    //     model.setNicho(nichoRepository.findById(dto.getCodigoNicho()).orElseThrow());
+    //     return model;
+    // }
 }

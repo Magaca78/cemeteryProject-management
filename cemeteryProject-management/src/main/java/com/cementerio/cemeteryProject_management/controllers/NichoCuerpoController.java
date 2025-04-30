@@ -2,6 +2,7 @@ package com.cementerio.cemeteryProject_management.controllers;
 
 import com.cementerio.cemeteryProject_management.dtos.CuerpoInhumadoDTO;
 import com.cementerio.cemeteryProject_management.dtos.NichoCuerpoDTO;
+import com.cementerio.cemeteryProject_management.dtos.NichoDTO;
 import com.cementerio.cemeteryProject_management.services.NichoCuerpoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -61,4 +62,12 @@ public class NichoCuerpoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/cuerpo/{idCadaver}")
+    public ResponseEntity<NichoDTO> getNichoPorCuerpo(@PathVariable String idCadaver) {
+        return service.getNichoAsignadoPorCuerpo(idCadaver)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+
 }

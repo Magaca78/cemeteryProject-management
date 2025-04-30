@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface INichoCuerpoRepository extends JpaRepository<NichoCuerpoModel, String> {
   Optional<NichoCuerpoModel> findByNicho_Codigo(String codigoNicho);
   boolean existsByNichoCodigo(String codigoNicho);
+  Optional<NichoCuerpoModel> findByCuerpoInhumado_IdCadaver(String idCadaver);
 }

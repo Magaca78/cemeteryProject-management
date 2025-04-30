@@ -56,4 +56,14 @@ public class CuerpoInhumadoController {
     public List<CuerpoInhumadoDTO> getUltimosCuerpos(@RequestParam(defaultValue = "8") int cantidad) {
         return cuerpoInhumadoService.getLatestCuerposInhumados(cantidad);
     }
+
+    /**
+     * Busca cuerpos por nombre, apellido, documento de identidad o id
+     * @param query Término de búsqueda
+     * @return Lista de cuerpos que coinciden con la búsqueda
+     */
+    @GetMapping("/search")
+    public List<CuerpoInhumadoDTO> searchCuerpos(@RequestParam String query) {
+        return cuerpoInhumadoService.searchCuerpos(query);
+    }
 }

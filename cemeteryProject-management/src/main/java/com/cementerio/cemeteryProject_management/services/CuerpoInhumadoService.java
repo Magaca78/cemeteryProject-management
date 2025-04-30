@@ -130,4 +130,13 @@ public class CuerpoInhumadoService {
             .map(this::convertToDTO)
             .toList();
     }
+
+    /**
+     * Busca cuerpos por nombre, apellido, documento de identidad o ID
+     */
+    public List<CuerpoInhumadoDTO> searchCuerpos(String query) {
+        return cuerpoInhumadoRepository.searchByQuery(query).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
 }
