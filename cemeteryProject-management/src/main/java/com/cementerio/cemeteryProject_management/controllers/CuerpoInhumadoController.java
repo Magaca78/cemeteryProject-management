@@ -51,4 +51,9 @@ public class CuerpoInhumadoController {
     public List<CuerpoInhumadoDTO> getCuerposNoAsignados() {
         return cuerpoInhumadoService.getCuerposNoAsignados();
     }
+
+    @GetMapping("/ultimos")
+    public List<CuerpoInhumadoDTO> getUltimosCuerpos(@RequestParam(defaultValue = "8") int cantidad) {
+        return cuerpoInhumadoService.getLatestCuerposInhumados(cantidad);
+    }
 }

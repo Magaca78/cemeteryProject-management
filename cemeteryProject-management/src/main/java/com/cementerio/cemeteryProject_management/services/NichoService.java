@@ -6,7 +6,9 @@ import com.cementerio.cemeteryProject_management.models.NichoModel.EstadoNicho;
 import com.cementerio.cemeteryProject_management.repositories.INichoCuerpoRepository;
 import com.cementerio.cemeteryProject_management.repositories.INichoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -108,5 +110,18 @@ public class NichoService {
             .map(this::convertToDTO)
             .toList();
     }
-    
+
+    public Optional<NichoDTO> updateEstadoNicho(String codigo, String estado) {
+    return nichoRepository.findByCodigoIgnoreCase(codigo.trim()) // <-- trim para limpiar espacios
+        .map(nicho -> {
+            try {
+                NichoModel.EstadoNicho nuevoEstado = NichoModel.EstadoNicho.valueOf(estado.toUpperCase());
+                nicho.setEstado(nuevoEstado);
+                return convertToDTO(nichoRepository.save(nicho));
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estado no válido: " + estado);
+            }
+        });
+    }
+
 }

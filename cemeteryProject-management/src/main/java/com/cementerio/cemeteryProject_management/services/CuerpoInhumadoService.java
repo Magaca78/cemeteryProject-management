@@ -4,6 +4,8 @@ import com.cementerio.cemeteryProject_management.dtos.CuerpoInhumadoDTO;
 import com.cementerio.cemeteryProject_management.models.CuerpoInhumadoModel;
 import com.cementerio.cemeteryProject_management.repositories.ICuerpoInhumadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -115,6 +117,15 @@ public class CuerpoInhumadoService {
 
     public List<CuerpoInhumadoDTO> getCuerposNoAsignados() {
         return cuerpoInhumadoRepository.findCuerposNoAsignados()
+            .stream()
+            .map(this::convertToDTO)
+            .toList();
+    }
+
+    // Método para obtener los últimos cuerpos inhumados
+    public List<CuerpoInhumadoDTO> getLatestCuerposInhumados(int cantidad) {
+        Pageable pageable = PageRequest.of(0, cantidad);
+        return cuerpoInhumadoRepository.findLatestCuerpos(pageable)
             .stream()
             .map(this::convertToDTO)
             .toList();

@@ -57,4 +57,11 @@ public class NichoController {
     public List<NichoDTO> getNichosDisponibles() {
         return nichoService.getNichosDisponibles();
     }
+
+    @PutMapping("/actualizar-estado/{codigo}")
+    public ResponseEntity<NichoDTO> updateEstado(@PathVariable String codigo, @RequestParam String estado) {
+        return nichoService.updateEstadoNicho(codigo, estado)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
