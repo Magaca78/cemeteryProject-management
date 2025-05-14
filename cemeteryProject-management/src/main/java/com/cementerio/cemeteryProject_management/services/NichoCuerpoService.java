@@ -31,8 +31,6 @@ public class NichoCuerpoService {
     @Autowired
     private CuerpoInhumadoService cuerpoInhumadoService;
 
-    @Autowired
-
 
     public List<NichoCuerpoDTO> getAll() {
         return nichoCuerpoRepository.findAll().stream()
@@ -131,12 +129,4 @@ public class NichoCuerpoService {
         dto.setEstado(model.getEstado());
         return dto;
     }
-
-
-    // private NichoCuerpoModel convertToModel(NichoCuerpoDTO dto) {
-    //     NichoCuerpoModel model = new NichoCuerpoModel();
-    //     model.setCuerpoInhumado(cuerpoInhumadoRepository.findById(dto.getIdCadaver()).orElseThrow());
-    //     model.setNicho(nichoRepository.findById(dto.getCodigoNicho()).orElseThrow());
-    //     return model;
-    // }
 }
