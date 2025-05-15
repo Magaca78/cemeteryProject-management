@@ -5,7 +5,9 @@ import com.cementerio.cemeteryProject_management.services.EventoCuerpoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,9 +30,30 @@ public class EventoCuerpoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public EventoCuerpoDTO create(@RequestBody EventoCuerpoDTO dto) {
-        return service.createEvento(dto);
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<?> create(
+            @RequestPart("idCadaver") String idCadaver,
+            @RequestPart("fechaEvento") String fechaEvento,
+            @RequestPart("tipoEvento") String tipoEvento,
+            @RequestPart("resumenEvento") String resumenEvento,
+            @RequestPart("archivo") MultipartFile archivo) {
+        try {
+            // Crear un DTO para pasar los datos al servicio
+            EventoCuerpoDTO dto = new EventoCuerpoDTO();
+            dto.setIdCadaver(idCadaver);
+            dto.setFechaEvento(LocalDate.parse(fechaEvento)); // Convertir String a LocalDate
+            dto.setTipoEvento(tipoEvento);
+            dto.setResumenEvento(resumenEvento);
+            dto.setArchivo(archivo);
+
+            // Llamar al servicio para crear el evento
+            EventoCuerpoDTO created = service.createEvento(dto);
+            return ResponseEntity.ok(created);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error interno: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")

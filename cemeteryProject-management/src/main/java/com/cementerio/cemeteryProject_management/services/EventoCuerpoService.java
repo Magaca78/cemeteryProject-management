@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,9 @@ public class EventoCuerpoService {
 
     @Autowired
     private ICuerpoInhumadoRepository cuerpoRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService; // Inyectar CloudinaryService
 
     /* =========================
        CRUD BÁSICO
@@ -39,21 +43,32 @@ public class EventoCuerpoService {
         return eventoRepository.findById(id).map(this::convertToDTO);
     }
 
-    public EventoCuerpoDTO createEvento(EventoCuerpoDTO dto) {
-        // Validar existencia del cuerpo
+    public EventoCuerpoDTO createEvento(EventoCuerpoDTO dto) throws IOException {
+        // Validar existencia del cuerpo
         CuerpoInhumadoModel cuerpo = cuerpoRepository.findById(dto.getIdCadaver())
                 .orElseThrow(() -> new IllegalArgumentException("El cuerpo no existe"));
 
-        EventoCuerpoModel model = convertToModel(dto);
-        model.setId(null);               // Dejar que @PrePersist genere el UUID
-        model.setCuerpoInhumado(cuerpo);
+        // Subir el archivo a Cloudinary y obtener la URL
+        String urlArchivo = null;
+        if (dto.getArchivo() != null && !dto.getArchivo().isEmpty()) {
+            urlArchivo = cloudinaryService.uploadFile(dto.getArchivo());
+        } else {
+            throw new IllegalArgumentException("El archivo es obligatorio");
+        }
 
+        // Crear el modelo y asignar la URL
+        EventoCuerpoModel model = convertToModel(dto);
+        model.setId(null); // Dejar que @PrePersist genere el UUID
+        model.setCuerpoInhumado(cuerpo);
+        model.setArchivo(urlArchivo); // Asignar la URL al modelo
+
+        // Guardar en la base de datos
         return convertToDTO(eventoRepository.save(model));
     }
 
     public Optional<EventoCuerpoDTO> updateEvento(String id, EventoCuerpoDTO dto) {
         return eventoRepository.findById(id).map(existing -> {
-            // Si cambia el cadáver, validar el nuevo
+            // Si cambia el cadáver, validar el nuevo
             if (!existing.getCuerpoInhumado().getIdCadaver().equals(dto.getIdCadaver())) {
                 CuerpoInhumadoModel nuevoCuerpo = cuerpoRepository.findById(dto.getIdCadaver())
                         .orElseThrow(() -> new IllegalArgumentException("El cuerpo no existe"));
@@ -62,7 +77,8 @@ public class EventoCuerpoService {
             existing.setFechaEvento(dto.getFechaEvento());
             existing.setTipoEvento(dto.getTipoEvento());
             existing.setResumenEvento(dto.getResumenEvento());
-            existing.setArchivo(dto.getArchivo());
+            // Nota: Si deseas permitir actualizar el archivo, aquí también deberías manejar la subida a Cloudinary
+            existing.setArchivo(dto.getArchivo() != null ? dto.getArchivo().toString() : existing.getArchivo());
             return convertToDTO(eventoRepository.save(existing));
         });
     }
@@ -79,7 +95,6 @@ public class EventoCuerpoService {
        MÉTODOS ESPECÍFICOS
        ========================= */
 
-    /** Devuelve todos los eventos de un cadáver ordenados por fecha descendente */
     public List<EventoCuerpoDTO> getEventosPorCuerpo(String idCadaver) {
         return eventoRepository.findByCuerpoInhumado_IdCadaver(idCadaver)
                 .stream()
@@ -88,7 +103,6 @@ public class EventoCuerpoService {
                 .collect(Collectors.toList());
     }
 
-    /** Devuelve los últimos N eventos globales por fechaEvento */
     public List<EventoCuerpoDTO> getLatestEventos(int cantidad) {
         Pageable pageable = PageRequest.of(0, cantidad);
         return eventoRepository.findLatestEventos(pageable)
@@ -97,7 +111,6 @@ public class EventoCuerpoService {
                 .collect(Collectors.toList());
     }
 
-    /** Busca texto libre en el resumen del evento */
     public List<EventoCuerpoDTO> searchEventos(String texto) {
         return eventoRepository.searchByResumen(texto)
                 .stream()
@@ -105,7 +118,6 @@ public class EventoCuerpoService {
                 .collect(Collectors.toList());
     }
 
-    /** Filtra por tipo de evento (IgnoreCase) y, opcionalmente, por rango de fechas */
     public List<EventoCuerpoDTO> getEventosPorTipoYRango(
             String tipoEvento,
             LocalDate desde,
@@ -115,7 +127,7 @@ public class EventoCuerpoService {
 
         return base.stream()
                 .filter(e -> (desde == null || !e.getFechaEvento().isBefore(desde)) &&
-                             (hasta == null || !e.getFechaEvento().isAfter(hasta)))
+                        (hasta == null || !e.getFechaEvento().isAfter(hasta)))
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -131,17 +143,16 @@ public class EventoCuerpoService {
         dto.setFechaEvento(model.getFechaEvento());
         dto.setTipoEvento(model.getTipoEvento());
         dto.setResumenEvento(model.getResumenEvento());
-        dto.setArchivo(model.getArchivo());
+        dto.setArchivo(null); // No devolvemos el MultipartFile, solo la URL
         return dto;
     }
 
     private EventoCuerpoModel convertToModel(EventoCuerpoDTO dto) {
         EventoCuerpoModel model = new EventoCuerpoModel();
-        // Cuerpo se asigna arriba (create/update)
         model.setFechaEvento(dto.getFechaEvento());
         model.setTipoEvento(dto.getTipoEvento());
         model.setResumenEvento(dto.getResumenEvento());
-        model.setArchivo(dto.getArchivo());
+        // No asignamos archivo aquí, se asigna en createEvento después de subir a Cloudinary
         return model;
     }
 }

@@ -31,7 +31,6 @@ public class EventoCuerpoModel {
     @NotNull
     private String resumenEvento;
 
-    @NotNull
     private String archivo;
 
     @PrePersist
