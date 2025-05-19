@@ -1,7 +1,6 @@
 package com.cementerio.cemeteryProject_management.services;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,6 +65,7 @@ public class CloudinaryService {
             options.put("resource_type", resourceType);
             options.put("overwrite", true);
             options.put("use_filename", true);
+            options.put("access_mode", "public"); // Asegurar que el acceso sea público
             if (forcedContentType != null) {
                 options.put("content_type", forcedContentType);
             }

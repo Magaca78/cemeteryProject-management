@@ -1,13 +1,13 @@
 package com.cementerio.cemeteryProject_management.controllers;
 
-import com.cementerio.cemeteryProject_management.dtos.EventoCuerpoDTO;
+import com.cementerio.cemeteryProject_management.dtos.EventoCuerpoDTOCreate;
+import com.cementerio.cemeteryProject_management.dtos.EventoCuerpoDTOShow;
 import com.cementerio.cemeteryProject_management.services.EventoCuerpoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,12 +19,12 @@ public class EventoCuerpoController {
     private EventoCuerpoService service;
 
     @GetMapping
-    public List<EventoCuerpoDTO> getAll() {
-        return service.getAllEventos();
+    public List<EventoCuerpoDTOShow> getAll() {
+        return service.getAllEventosShow();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventoCuerpoDTO> getById(@PathVariable String id) {
+    public ResponseEntity<EventoCuerpoDTOShow> getById(@PathVariable String id) {
         return service.getEventoById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -39,7 +39,7 @@ public class EventoCuerpoController {
             @RequestPart("archivo") MultipartFile archivo) {
         try {
             // Crear un DTO para pasar los datos al servicio
-            EventoCuerpoDTO dto = new EventoCuerpoDTO();
+            EventoCuerpoDTOCreate dto = new EventoCuerpoDTOCreate();
             dto.setIdCadaver(idCadaver);
             dto.setFechaEvento(LocalDate.parse(fechaEvento)); // Convertir String a LocalDate
             dto.setTipoEvento(tipoEvento);
@@ -47,7 +47,7 @@ public class EventoCuerpoController {
             dto.setArchivo(archivo);
 
             // Llamar al servicio para crear el evento
-            EventoCuerpoDTO created = service.createEvento(dto);
+            EventoCuerpoDTOCreate created = service.createEvento(dto);
             return ResponseEntity.ok(created);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -57,7 +57,7 @@ public class EventoCuerpoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventoCuerpoDTO> update(@PathVariable String id, @RequestBody EventoCuerpoDTO dto) {
+    public ResponseEntity<EventoCuerpoDTOCreate> update(@PathVariable String id, @RequestBody EventoCuerpoDTOCreate dto) {
         return service.updateEvento(id, dto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -72,17 +72,17 @@ public class EventoCuerpoController {
     }
 
     @GetMapping("/cuerpo/{idCadaver}")
-    public List<EventoCuerpoDTO> getEventosPorCuerpo(@PathVariable String idCadaver) {
+    public List<EventoCuerpoDTOShow> getEventosPorCuerpo(@PathVariable String idCadaver) {
         return service.getEventosPorCuerpo(idCadaver);
     }
 
     @GetMapping("/ultimos")
-    public List<EventoCuerpoDTO> getUltimosEventos(@RequestParam(defaultValue = "10") int cantidad) {
+    public List<EventoCuerpoDTOShow> getUltimosEventos(@RequestParam(defaultValue = "10") int cantidad) {
         return service.getLatestEventos(cantidad);
     }
 
     @GetMapping("/search")
-    public List<EventoCuerpoDTO> searchEventos(@RequestParam String query) {
+    public List<EventoCuerpoDTOShow> searchEventos(@RequestParam String query) {
         return service.searchEventos(query);
     }
 
@@ -91,7 +91,7 @@ public class EventoCuerpoController {
      * Ejemplo: /eventoscuerpos/filtrar?tipo=Inhumacion&desde=2024-01-01&hasta=2025-01-01
      */
     @GetMapping("/filtrar")
-    public List<EventoCuerpoDTO> getEventosPorTipoYRango(
+    public List<EventoCuerpoDTOShow> getEventosPorTipoYRango(
             @RequestParam String tipo,
             @RequestParam(required = false) String desde,
             @RequestParam(required = false) String hasta

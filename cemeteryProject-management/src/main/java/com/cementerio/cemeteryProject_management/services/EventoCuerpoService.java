@@ -1,6 +1,7 @@
 package com.cementerio.cemeteryProject_management.services;
 
-import com.cementerio.cemeteryProject_management.dtos.EventoCuerpoDTO;
+import com.cementerio.cemeteryProject_management.dtos.EventoCuerpoDTOCreate;
+import com.cementerio.cemeteryProject_management.dtos.EventoCuerpoDTOShow;
 import com.cementerio.cemeteryProject_management.models.CuerpoInhumadoModel;
 import com.cementerio.cemeteryProject_management.models.EventoCuerpoModel;
 import com.cementerio.cemeteryProject_management.repositories.ICuerpoInhumadoRepository;
@@ -32,18 +33,18 @@ public class EventoCuerpoService {
        CRUD BÁSICO
        ========================= */
 
-    public List<EventoCuerpoDTO> getAllEventos() {
+    public List<EventoCuerpoDTOShow> getAllEventosShow() {
         return eventoRepository.findAll()
                 .stream()
-                .map(this::convertToDTO)
+                .map(this::convertToDTOShow)
                 .collect(Collectors.toList());
     }
 
-    public Optional<EventoCuerpoDTO> getEventoById(String id) {
-        return eventoRepository.findById(id).map(this::convertToDTO);
+    public Optional<EventoCuerpoDTOShow> getEventoById(String id) {
+        return eventoRepository.findById(id).map(this::convertToDTOShow);
     }
 
-    public EventoCuerpoDTO createEvento(EventoCuerpoDTO dto) throws IOException {
+    public EventoCuerpoDTOCreate createEvento(EventoCuerpoDTOCreate dto) throws IOException {
         // Validar existencia del cuerpo
         CuerpoInhumadoModel cuerpo = cuerpoRepository.findById(dto.getIdCadaver())
                 .orElseThrow(() -> new IllegalArgumentException("El cuerpo no existe"));
@@ -66,7 +67,7 @@ public class EventoCuerpoService {
         return convertToDTO(eventoRepository.save(model));
     }
 
-    public Optional<EventoCuerpoDTO> updateEvento(String id, EventoCuerpoDTO dto) {
+    public Optional<EventoCuerpoDTOCreate> updateEvento(String id, EventoCuerpoDTOCreate dto) {
         return eventoRepository.findById(id).map(existing -> {
             // Si cambia el cadáver, validar el nuevo
             if (!existing.getCuerpoInhumado().getIdCadaver().equals(dto.getIdCadaver())) {
@@ -95,30 +96,30 @@ public class EventoCuerpoService {
        MÉTODOS ESPECÍFICOS
        ========================= */
 
-    public List<EventoCuerpoDTO> getEventosPorCuerpo(String idCadaver) {
+    public List<EventoCuerpoDTOShow> getEventosPorCuerpo(String idCadaver) {
         return eventoRepository.findByCuerpoInhumado_IdCadaver(idCadaver)
                 .stream()
                 .sorted((a, b) -> b.getFechaEvento().compareTo(a.getFechaEvento()))
-                .map(this::convertToDTO)
+                .map(this::convertToDTOShow)
                 .collect(Collectors.toList());
     }
 
-    public List<EventoCuerpoDTO> getLatestEventos(int cantidad) {
+    public List<EventoCuerpoDTOShow> getLatestEventos(int cantidad) {
         Pageable pageable = PageRequest.of(0, cantidad);
         return eventoRepository.findLatestEventos(pageable)
                 .stream()
-                .map(this::convertToDTO)
+                .map(this::convertToDTOShow)
                 .collect(Collectors.toList());
     }
 
-    public List<EventoCuerpoDTO> searchEventos(String texto) {
+    public List<EventoCuerpoDTOShow> searchEventos(String texto) {
         return eventoRepository.searchByResumen(texto)
                 .stream()
-                .map(this::convertToDTO)
+                .map(this::convertToDTOShow)
                 .collect(Collectors.toList());
     }
 
-    public List<EventoCuerpoDTO> getEventosPorTipoYRango(
+    public List<EventoCuerpoDTOShow> getEventosPorTipoYRango(
             String tipoEvento,
             LocalDate desde,
             LocalDate hasta) {
@@ -128,7 +129,7 @@ public class EventoCuerpoService {
         return base.stream()
                 .filter(e -> (desde == null || !e.getFechaEvento().isBefore(desde)) &&
                         (hasta == null || !e.getFechaEvento().isAfter(hasta)))
-                .map(this::convertToDTO)
+                .map(this::convertToDTOShow)
                 .collect(Collectors.toList());
     }
 
@@ -136,8 +137,8 @@ public class EventoCuerpoService {
        CONVERSIÓN DTO ↔ MODEL
        ========================= */
 
-    private EventoCuerpoDTO convertToDTO(EventoCuerpoModel model) {
-        EventoCuerpoDTO dto = new EventoCuerpoDTO();
+    private EventoCuerpoDTOCreate convertToDTO(EventoCuerpoModel model) {
+        EventoCuerpoDTOCreate dto = new EventoCuerpoDTOCreate();
         dto.setId(model.getId());
         dto.setIdCadaver(model.getCuerpoInhumado().getIdCadaver());
         dto.setFechaEvento(model.getFechaEvento());
@@ -147,7 +148,19 @@ public class EventoCuerpoService {
         return dto;
     }
 
-    private EventoCuerpoModel convertToModel(EventoCuerpoDTO dto) {
+    private EventoCuerpoDTOShow convertToDTOShow(EventoCuerpoModel model) {
+        EventoCuerpoDTOShow dto = new EventoCuerpoDTOShow();
+        dto.setId(model.getId());
+        dto.setIdCadaver(model.getCuerpoInhumado().getIdCadaver());
+        dto.setFechaEvento(model.getFechaEvento());
+        dto.setTipoEvento(model.getTipoEvento());
+        dto.setResumenEvento(model.getResumenEvento());
+        dto.setArchivo(model.getArchivo());
+        return dto;
+    }
+
+
+    private EventoCuerpoModel convertToModel(EventoCuerpoDTOCreate dto) {
         EventoCuerpoModel model = new EventoCuerpoModel();
         model.setFechaEvento(dto.getFechaEvento());
         model.setTipoEvento(dto.getTipoEvento());
