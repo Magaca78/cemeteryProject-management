@@ -84,6 +84,12 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>7.0.5.Final</version>
 		</dependency>
+
+		<!-- Spring Boot Starter Web (includes RestTemplate) -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 	</dependencies>
 
 	<build>
