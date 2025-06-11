@@ -46,7 +46,7 @@ public class CuerpoInhumadoService {
             existing.setFechaDefuncion(dto.getFechaDefuncion());
             existing.setFechaIngreso(dto.getFechaIngreso());
             existing.setFechaInhumacion(dto.getFechaInhumacion());
-            existing.setFechaExhumacion(dto.getFechaExhumacion());
+            existing.setFechaExhumacion(dto.getFechaExhumacion() != null ? dto.getFechaExhumacion() : null);
             existing.setFuncionarioReceptor(dto.getFuncionarioReceptor());
             existing.setCargoFuncionario(dto.getCargoFuncionario());
             existing.setAutoridadRemitente(dto.getAutoridadRemitente());
