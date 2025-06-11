@@ -109,29 +109,30 @@ public class CuerpoInhumadoController {
             }
 
             // Map FastApiCuerpoInhumadoResponse to CuerpoInhumadoDTO
-            // CuerpoInhumadoDTO fastApiResponse = response.getBody();
-            // CuerpoInhumadoDTO dto = new CuerpoInhumadoDTO();
-            // dto.setNombre(fastApiResponse.getNombre());
-            // dto.setApellido(fastApiResponse.getApellido());
-            // dto.setDocumentoIdentidad(fastApiResponse.getDocumentoIdentidad());
-            // dto.setNumeroProtocoloNecropsia(fastApiResponse.getNumeroProtocoloNecropsia());
-            // dto.setCausaMuerte(fastApiResponse.getCausaMuerte());
-            // dto.setFechaNacimiento(fastApiResponse.getFechaNacimiento());
-            // dto.setFechaDefuncion(fastApiResponse.getFechaDefuncion());
-            // dto.setFechaIngreso(fastApiResponse.getFechaIngreso());
-            // dto.setFechaInhumacion(fastApiResponse.getFechaInhumacion());
-            // dto.setFechaExhumacion(fastApiResponse.getFechaExhumacion());
-            // dto.setFuncionarioReceptor(fastApiResponse.getFuncionarioReceptor());
-            // dto.setCargoFuncionario(fastApiResponse.getCargoFuncionario());
-            // dto.setAutoridadRemitente(fastApiResponse.getAutoridadRemitente());
-            // dto.setCargoAutoridadRemitente(fastApiResponse.getCargoAutoridadRemitente());
-            // dto.setAutoridadExhumacion(fastApiResponse.getAutoridadExhumacion());
-            // dto.setCargoAutoridadExhumacion(fastApiResponse.getCargoAutoridadExhumacion());
-            // dto.setEstado(fastApiResponse.getEstado());
-            // dto.setObservaciones(fastApiResponse.getObservaciones());
+            CuerpoInhumadoSTRDTO fastApiResponse = response.getBody();
+            CuerpoInhumadoDTO dto = new CuerpoInhumadoDTO();
+            dto.setNombre(fastApiResponse.getNombre());
+            dto.setApellido(fastApiResponse.getApellido());
+            dto.setDocumentoIdentidad(fastApiResponse.getDocumentoIdentidad());
+            dto.setNumeroProtocoloNecropsia(fastApiResponse.getNumeroProtocoloNecropsia());
+            dto.setCausaMuerte(fastApiResponse.getCausaMuerte());
+            dto.setFechaNacimiento(fastApiResponse.getFechaNacimiento());
+            dto.setFechaDefuncion(fastApiResponse.getFechaDefuncion());
+            dto.setFechaIngreso(fastApiResponse.getFechaIngreso().atStartOfDay());
+            dto.setFechaInhumacion(fastApiResponse.getFechaInhumacion());
+            dto.setFechaExhumacion(fastApiResponse.getFechaExhumacion() != null ? fastApiResponse.getFechaExhumacion() : null);
+            dto.setFuncionarioReceptor(fastApiResponse.getFuncionarioReceptor());
+            dto.setCargoFuncionario(fastApiResponse.getCargoFuncionario());
+            dto.setAutoridadRemitente(fastApiResponse.getAutoridadRemitente());
+            dto.setCargoAutoridadRemitente(fastApiResponse.getCargoAutoridadRemitente());
+            dto.setAutoridadExhumacion(fastApiResponse.getAutoridadExhumacion());
+            dto.setCargoAutoridadExhumacion(fastApiResponse.getCargoAutoridadExhumacion());
+            dto.setEstado(fastApiResponse.getEstado());
+            dto.setObservaciones(fastApiResponse.getObservaciones());
 
-            // Create the record using the service
-            // CuerpoInhumadoDTO created = cuerpoInhumadoService.createCuerpoInhumado(dto);
+            //Create the record using the service
+            CuerpoInhumadoDTO created = cuerpoInhumadoService.createCuerpoInhumado(dto);
+
             
             return response;
         } catch (Exception e) {

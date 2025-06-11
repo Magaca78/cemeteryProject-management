@@ -45,7 +45,7 @@ public class CuerpoInhumadoModel {
     @NotNull
     private LocalDate fechaInhumacion;
 
-    @NotNull
+    @Column(name = "fecha_exhumacion", nullable = true)
     private LocalDate fechaExhumacion;
 
     @NotNull

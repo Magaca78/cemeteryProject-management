@@ -2,6 +2,8 @@ package com.cementerio.cemeteryProject_management.dtos;
 
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import com.cementerio.cemeteryProject_management.models.CuerpoInhumadoModel.EstadoCuerpo;
@@ -16,11 +18,11 @@ public class CuerpoInhumadoSTRDTO {
     private String documentoIdentidad;
     private String numeroProtocoloNecropsia;
     private String causaMuerte;
-    private String fechaNacimiento;
-    private String fechaDefuncion;
-    private String fechaIngreso;
-    private String fechaInhumacion;
-    private String fechaExhumacion;
+    private LocalDate fechaNacimiento;
+    private LocalDate fechaDefuncion;
+    private LocalDate fechaIngreso;
+    private LocalDate fechaInhumacion;
+    private LocalDate fechaExhumacion = null; // Puede ser null si no se ha exhumado
     private String funcionarioReceptor;
     private String cargoFuncionario;
     private String autoridadRemitente;

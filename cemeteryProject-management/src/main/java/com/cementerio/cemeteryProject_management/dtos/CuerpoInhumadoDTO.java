@@ -20,7 +20,7 @@ public class CuerpoInhumadoDTO {
     private LocalDate fechaDefuncion;
     private LocalDateTime fechaIngreso;
     private LocalDate fechaInhumacion;
-    private LocalDate fechaExhumacion;
+    private LocalDate fechaExhumacion = null; // Puede ser null si no se ha exhumado
     private String funcionarioReceptor;
     private String cargoFuncionario;
     private String autoridadRemitente;
