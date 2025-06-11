@@ -79,7 +79,7 @@ public class CuerpoInhumadoController {
     }
 
     @PostMapping("/from-form")
-    public ResponseEntity<CuerpoInhumadoSTRDTO> createFromForm(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<CuerpoInhumadoDTO> createFromForm(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
@@ -133,8 +133,8 @@ public class CuerpoInhumadoController {
             //Create the record using the service
             CuerpoInhumadoDTO created = cuerpoInhumadoService.createCuerpoInhumado(dto);
 
+            return ResponseEntity.ok(created);
             
-            return response;
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
